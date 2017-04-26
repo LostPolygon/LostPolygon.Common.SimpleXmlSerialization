@@ -171,9 +171,10 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
 
         public override void ProcessWhileNotElementEnd(Action action) {
             if (IsDeserializing) {
+                XmlNode parentNode = CurrentXmlElement.ParentNode;
                 do {
                     action();
-                } while (CurrentXmlElement.NextSibling != null);
+                } while (CurrentXmlElement != parentNode);
             } else {
                 action();
             }
