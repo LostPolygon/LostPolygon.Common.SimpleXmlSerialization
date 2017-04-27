@@ -6,8 +6,8 @@ using System.Xml;
 
 namespace LostPolygon.Common.SimpleXmlSerialization {
     public class SimpleXmlSerializer : SimpleXmlSerializerBase {
-        public SimpleXmlSerializer(bool isDeserealizing, XmlDocument xmlDocument, XmlElement currentXmlElement)
-            : base(isDeserealizing, xmlDocument, currentXmlElement) {
+        public SimpleXmlSerializer(bool isDeserializing, XmlDocument xmlDocument, XmlElement currentXmlElement)
+            : base(isDeserializing, xmlDocument, currentXmlElement) {
         }
 
         protected override SimpleXmlSerializerBase Clone() {

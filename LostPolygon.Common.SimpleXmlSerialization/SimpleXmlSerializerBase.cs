@@ -14,10 +14,10 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
         public bool IsDeserializing { get; }
 
         protected SimpleXmlSerializerBase(
-            bool isDeserealizing,
+            bool isDeserializing,
             XmlDocument xmlDocument,
             XmlElement currentXmlElement) {
-            IsDeserializing  = isDeserealizing;
+            IsDeserializing  = isDeserializing;
             Document = xmlDocument ?? throw new ArgumentNullException(nameof(xmlDocument));
             CurrentXmlElement = currentXmlElement;
         }
@@ -50,18 +50,6 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
 
         public virtual void ProcessWithFlags(SimpleXmlSerializerFlags flags, Action action) {
             action();
-        }
-
-        public virtual T CreateByXmlRootName<T>(string name, params Type[] types)
-            where T : class {
-            foreach (Type type in types) {
-                if (GetXmlRootName(type) == name) {
-                    T value = (T) CloneSerializerAndInvokeSerializationMethod(type);
-                    return value;
-                }
-            }
-
-            throw new NotSupportedException($"Unknown element name {name}");
         }
 
         public virtual T CreateByKnownInheritors<T>(string name, SimpleXmlSerializerBase serializer = null)
@@ -102,13 +90,7 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
             return GetXmlRootName(typeof(T));
         }
 
-        protected object CloneSerializerAndInvokeSerializationMethod(Type serializedObjectType)
-        {
-            return CloneSerializerAndInvokeSerializationMethod(serializedObjectType, null);
-        }
-
-        protected object CloneSerializerAndInvokeSerializationMethod(Type serializedObjectType, object serializedObject)
-        {
+        protected object CloneSerializerAndInvokeSerializationMethod(Type serializedObjectType, object serializedObject = null) {
             return InvokeSerializationMethod(serializedObjectType, serializedObject, Clone());
         }
 
@@ -131,8 +113,7 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
 
             public static MethodInfo GetSerializationMethod(Type serializedObjectType, object serializedObject) {
                 serializedObjectType = serializedObject?.GetType() ?? serializedObjectType;
-                MethodInfo serializationMethod;
-                if (!_typeToSerializationMethodMap.TryGetValue(serializedObjectType, out serializationMethod)) {
+                if (!_typeToSerializationMethodMap.TryGetValue(serializedObjectType, out MethodInfo serializationMethod)) {
                     serializationMethod =
                         serializedObjectType
                             .GetMethods(BindingFlags.Public | BindingFlags.Static)
