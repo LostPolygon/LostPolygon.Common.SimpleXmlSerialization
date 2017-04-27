@@ -16,7 +16,8 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
                     xmlTextWriter.IndentChar = ' ';
                     xmlTextWriter.Indentation = 4;
 
-                    XmlElement schemaElement = xmlDocument.CreateElement("xs", "schema", "http://www.w3.org/2001/XMLSchema");
+                    const string xmlNamespace = "xs";
+                    XmlElement schemaElement = xmlDocument.CreateElement(xmlNamespace, "schema", "http://www.w3.org/2001/XMLSchema");
                     schemaElement.SetAttribute("elementFormDefault", "qualified");
                     schemaElement.SetAttribute("attributeFormDefault", "unqualified");
                     xmlDocument.InsertBefore(schemaElement, null);
@@ -24,8 +25,13 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
                     SchemaGeneratorSimpleXmlSerializer serializer = new SchemaGeneratorSimpleXmlSerializer(xmlDocument, schemaElement);
                     SimpleXmlSerializerBase.InvokeSerializationMethod(serializedObject, serializer);
 
-                    serializer.InsertCapturedTypes();
+                    serializer.PostProcess();
 
+                    xmlDocument.WriteContentTo(xmlTextWriter);
+
+                    string unformatted = sb.ToString();
+                    sb.Length = 0;
+                    xmlDocument.LoadXml(unformatted);
                     xmlDocument.WriteContentTo(xmlTextWriter);
                 }
             }

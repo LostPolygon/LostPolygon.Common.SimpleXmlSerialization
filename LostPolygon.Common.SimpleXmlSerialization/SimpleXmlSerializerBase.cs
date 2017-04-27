@@ -27,7 +27,7 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
         public abstract bool ProcessAttributeString(string name, Action<string> readAction, Func<string> writeFunc);
         public abstract bool ProcessStartElement(string name, string prefix = null, string namespaceUri = null);
         public abstract void ProcessEndElement();
-        public abstract void ProcessAdvanceOnRead();
+        public abstract void ProcessEnterChildOnRead();
 
         public abstract void ProcessCollection<T>(
             ICollection<T> collection,
@@ -46,7 +46,7 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
         public abstract void ProcessFlagsEnumAttributes<T>(T defaultValue, Action<T> readAction, Func<T> writeFunc)
             where T : struct, IConvertible;
 
-        public abstract void ProcessWhileNotElementEnd(Action action);
+        public abstract void ProcessUnorderedSequence(Action action);
 
         public virtual void ProcessWithFlags(SimpleXmlSerializerFlags flags, Action action) {
             action();

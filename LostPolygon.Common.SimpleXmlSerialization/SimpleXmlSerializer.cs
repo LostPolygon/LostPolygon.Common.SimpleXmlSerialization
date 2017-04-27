@@ -62,12 +62,17 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
                         CurrentXmlElement = (XmlElement) CurrentXmlElement.ParentNode;
                     }
                 } else {
-                    CurrentXmlElement = (XmlElement) CurrentXmlElement.ParentNode;
+                    XmlElement parentNode = (XmlElement) CurrentXmlElement.ParentNode;
+                    // Remove empty nodes
+                    if (!CurrentXmlElement.HasChildNodes && !CurrentXmlElement.HasAttributes) {
+                        parentNode.RemoveChild(CurrentXmlElement);
+                    }
+                    CurrentXmlElement = parentNode;
                 }
             }
         }
 
-        public override void ProcessAdvanceOnRead() {
+        public override void ProcessEnterChildOnRead() {
             if (IsDeserializing && CurrentXmlElement.HasChildNodes) {
                 CurrentXmlElement = (XmlElement) CurrentXmlElement.FirstChild;
             }
@@ -169,8 +174,11 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
             }
         }
 
-        public override void ProcessWhileNotElementEnd(Action action) {
+        public override void ProcessUnorderedSequence(Action action) {
             if (IsDeserializing) {
+                if (!CurrentXmlElement.HasChildNodes)
+                    return;
+
                 XmlNode parentNode = CurrentXmlElement.ParentNode;
                 do {
                     action();
