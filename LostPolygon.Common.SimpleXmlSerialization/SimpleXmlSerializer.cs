@@ -23,7 +23,9 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
                 readAction(xmlValue);
             } else {
                 string xmlValue = writeFunc();
-                CurrentXmlElement.SetAttribute(name, xmlValue);
+                if (!String.IsNullOrEmpty(xmlValue)) {
+                    CurrentXmlElement.SetAttribute(name, xmlValue);
+                }
             }
 
             return true;

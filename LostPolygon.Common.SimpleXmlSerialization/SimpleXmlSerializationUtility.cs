@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -39,13 +40,13 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
             return sb.ToString();
         }
 
-        public static string XmlSerializeToString<T>(T serializedObject) where T : class {
+        public static string XmlSerializeToString<T>(T serializedObject, Encoding encoding = null) where T : class {
             if (serializedObject == null)
                 return "";
 
             XmlDocument xmlDocument = new XmlDocument();
             StringBuilder sb = new StringBuilder();
-            using (TextWriter textWriter = new StringWriter(sb)) {
+            using (TextWriter textWriter = new UserEncodingStringWriter(sb, encoding ?? new UTF8Encoding(false))) {
                 using (XmlTextWriter xmlTextWriter = new XmlTextWriter(textWriter)) {
                     xmlTextWriter.Formatting = Formatting.Indented;
                     xmlTextWriter.IndentChar = ' ';
@@ -81,6 +82,17 @@ namespace LostPolygon.Common.SimpleXmlSerialization {
             }
 
             return result;
+        }
+
+        private class UserEncodingStringWriter : StringWriter {
+            private readonly Encoding _encoding;
+
+            public UserEncodingStringWriter(StringBuilder sb, Encoding encoding)
+                : base(sb) {
+                _encoding = encoding ?? throw new ArgumentNullException(nameof(encoding));
+            }
+
+            public override Encoding Encoding => _encoding;
         }
     }
 }
